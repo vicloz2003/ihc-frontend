@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function PaymentScreen() {
   const router = useRouter();
@@ -11,9 +11,12 @@ export default function PaymentScreen() {
   const [selectedAddress, setSelectedAddress] = useState('home');
 
   const handleConfirmPayment = () => {
-    Alert.alert('✅ Pago Exitoso', 'Tu pedido ha sido procesado correctamente.');
-    router.push('/(tabs)/home');
-  };
+  router.push({
+    pathname: '/order-success',
+    params: { total, paymentMethod: selectedPayment,address: selectedAddress, },
+  });
+};
+
 
   return (
     <SafeAreaView style={styles.safeArea}>
