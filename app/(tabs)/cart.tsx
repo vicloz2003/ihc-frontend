@@ -1,18 +1,20 @@
+import { useRouter } from 'expo-router';
 import React from 'react';
 import {
-    Alert,
-    FlatList,
-    Image,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  FlatList,
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useCart } from '../context/CartContext';
 
 export default function CartScreen() {
   const { cartItems, increaseQuantity, decreaseQuantity, clearCart } = useCart();
+  const router = useRouter();
 
   const total = cartItems.reduce(
     (sum, item) => sum + item.price * (item.quantity ?? 1),
@@ -57,7 +59,11 @@ export default function CartScreen() {
           ListFooterComponent={() => (
             <View style={styles.footer}>
               <Text style={styles.total}>Total: ${total.toFixed(2)}</Text>
-              <TouchableOpacity style={styles.payButton} onPress={handlePay}>
+              <TouchableOpacity
+                style={styles.payButton}
+                onPress={() => router.push({ pathname: '/(tabs)/payment', params: { total } })}
+              >
+                
                 <Text style={styles.payText}>Pagar</Text>
               </TouchableOpacity>
             </View>
