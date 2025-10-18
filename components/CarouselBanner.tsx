@@ -5,8 +5,8 @@ import Carousel from 'react-native-reanimated-carousel';
 const { width } = Dimensions.get('window');
 
 const banners = [
-  { id: 1, image: require('../assets/images/banner.png') },
-  { id: 2, image: require('../assets/images/banner.png') },
+  { id: 1, image: require('../assets/images/BannerGolden.png') },
+  { id: 2, image: require('../assets/images/BannerPaceña.png') },
   { id: 3, image: require('../assets/images/banner.png') },
 ];
 
