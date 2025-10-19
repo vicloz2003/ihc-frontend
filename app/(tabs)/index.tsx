@@ -7,11 +7,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
-  Alert,
   FlatList,
   SafeAreaView,
   ScrollView,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -46,26 +46,35 @@ const MOCK_PRODUCTS = [
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { addToCart } = useCart();
+  const { addToCart, cartItems } = useCart();
 
   const handleAddToCart = (product: any) => {
     addToCart(product);
-    Alert.alert('Agregado', `${product.name} añadido al carrito`);
+    // Eliminamos la alerta para una UX más fluida
   };
 
   const handleViewAll = (section: string) => {
-    Alert.alert('Navegación', `Ir a sección: ${section}`);
+    console.log(`Ir a sección: ${section}`);
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      {/* Header con buscador y carrito */}
       <View style={styles.header}>
         <SearchBar />
-        <TouchableOpacity onPress={() => router.push('/(tabs)/cart')}>
-          <Ionicons name="cart" size={28} color="#16a34a" />
-        </TouchableOpacity>
+        <View style={styles.cartContainer}>
+          <TouchableOpacity onPress={() => router.push('/(tabs)/cart')}>
+            <Ionicons name="cart" size={28} color="#16a34a" />
+            {cartItems.length > 0 && (
+              <View style={styles.cartBadge}>
+                <Text style={styles.cartBadgeText}>{cartItems.length}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
 
+      {/* Contenido principal */}
       <ScrollView showsVerticalScrollIndicator={false}>
         <CarouselBanner />
 
@@ -127,4 +136,25 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   list: { paddingHorizontal: 16, paddingBottom: 16 },
+
+  // 🔹 Estilos del badge del carrito
+  cartContainer: {
+    position: 'relative',
+  },
+  cartBadge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    backgroundColor: '#16a34a',
+    borderRadius: 10,
+    width: 18,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cartBadgeText: {
+    color: 'white',
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
 });

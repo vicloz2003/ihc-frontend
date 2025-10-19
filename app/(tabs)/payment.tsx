@@ -1,7 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 export default function PaymentScreen() {
   const router = useRouter();
@@ -11,12 +18,11 @@ export default function PaymentScreen() {
   const [selectedAddress, setSelectedAddress] = useState('home');
 
   const handleConfirmPayment = () => {
-  router.push({
-    pathname: '/order-success',
-    params: { total, paymentMethod: selectedPayment,address: selectedAddress, },
-  });
-};
-
+    router.push({
+      pathname: '/order-success',
+      params: { total, paymentMethod: selectedPayment, address: selectedAddress },
+    });
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -24,29 +30,28 @@ export default function PaymentScreen() {
         <Text style={styles.title}>Resumen de Pago</Text>
 
         {/* TOTAL */}
-        <View style={styles.section}>
+        <View style={styles.totalContainer}>
           <Text style={styles.label}>Total a pagar</Text>
           <Text style={styles.total}>${Number(total || 0).toFixed(2)}</Text>
         </View>
 
         {/* MÉTODO DE PAGO */}
         <Text style={styles.subtitle}>Método de pago</Text>
-        <View style={styles.section}>
+        <View style={styles.listContainer}>
           {[
-            { id: 'card', name: 'Tarjeta de Crédito o Débito', image: require('../../assets/images/visa.png') },
-            { id: 'paypal', name: 'PayPal', image: require('../../assets/images/paypal.png') },
-            { id: 'cash', name: 'Efectivo al entregar', image: require('../../assets/images/pollo.png') },
+            { id: 'card', name: 'Tarjeta de crédito o débito', icon: 'card-outline' },
+            { id: 'paypal', name: 'PayPal', icon: 'logo-paypal' },
+            { id: 'cash', name: 'Efectivo al entregar', icon: 'cash-outline' },
           ].map((method) => (
             <TouchableOpacity
               key={method.id}
-              style={[
-                styles.option,
-                selectedPayment === method.id && styles.optionSelected,
-              ]}
+              style={[styles.row, selectedPayment === method.id && styles.rowSelected]}
               onPress={() => setSelectedPayment(method.id)}
             >
-              <Image source={method.image} style={styles.icon} />
-              <Text style={styles.optionText}>{method.name}</Text>
+              <View style={styles.rowLeft}>
+                <Ionicons name={method.icon as any} size={22} color="#1e293b" />
+                <Text style={styles.rowText}>{method.name}</Text>
+              </View>
               {selectedPayment === method.id && (
                 <Ionicons name="checkmark-circle" size={22} color="#16a34a" />
               )}
@@ -56,29 +61,23 @@ export default function PaymentScreen() {
 
         {/* DIRECCIÓN DE ENTREGA */}
         <Text style={styles.subtitle}>Dirección de entrega</Text>
-        <View style={styles.section}>
+        <View style={styles.listContainer}>
           {[
             {
               id: 'home',
               name: 'Casa Principal – Av. Libertador #1234',
-              image: require('../../assets/images/location.png'),
-            },
-            {
-              id: 'office',
-              name: 'Oficina – Calle Sucre #456',
-              image: require('../../assets/images/location.png'),
+              icon: 'location-outline',
             },
           ].map((address) => (
             <TouchableOpacity
               key={address.id}
-              style={[
-                styles.option,
-                selectedAddress === address.id && styles.optionSelected,
-              ]}
+              style={[styles.row, selectedAddress === address.id && styles.rowSelected]}
               onPress={() => setSelectedAddress(address.id)}
             >
-              <Image source={address.image} style={styles.icon} />
-              <Text style={styles.optionText}>{address.name}</Text>
+              <View style={styles.rowLeft}>
+                <Ionicons name={address.icon as any} size={22} color="#1e293b" />
+                <Text style={styles.rowText}>{address.name}</Text>
+              </View>
               {selectedAddress === address.id && (
                 <Ionicons name="checkmark-circle" size={22} color="#16a34a" />
               )}
@@ -104,30 +103,40 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: '#f8fafc' },
   container: { flex: 1, padding: 16 },
   title: { fontSize: 22, fontWeight: '700', marginBottom: 16 },
-  subtitle: { fontSize: 18, fontWeight: '600', marginVertical: 12 },
-  section: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 12,
+  subtitle: { fontSize: 18, fontWeight: '600', marginVertical: 12, color: '#1e293b' },
+
+  totalContainer: {
     marginBottom: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 1,
   },
   label: { fontSize: 16, color: '#475569' },
-  total: { fontSize: 20, fontWeight: 'bold', color: '#16a34a', marginTop: 4 },
-  option: {
+  total: { fontSize: 22, fontWeight: 'bold', color: '#16a34a', marginTop: 6 },
+
+  listContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 3,
+    elevation: 1,
+  },
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 10,
+    paddingVertical: 12,
+    borderBottomColor: '#e2e8f0',
+    borderBottomWidth: 1,
   },
-  optionText: { flex: 1, marginLeft: 12, fontSize: 16 },
-  optionSelected: { backgroundColor: '#ecfdf5', borderRadius: 8 },
+  rowLeft: { flexDirection: 'row', alignItems: 'center' },
+  rowText: { marginLeft: 10, fontSize: 16, color: '#1e293b', flexShrink: 1 },
+  rowSelected: { backgroundColor: '#f0fdf4' },
+
   addButton: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
   addButtonText: { color: '#16a34a', fontSize: 15, marginLeft: 4 },
+
   payButton: {
     backgroundColor: '#16a34a',
     paddingVertical: 16,
@@ -137,5 +146,4 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   payButtonText: { color: 'white', fontWeight: 'bold', fontSize: 18 },
-  icon: { width: 32, height: 32, resizeMode: 'contain', marginRight: 8 },
 });

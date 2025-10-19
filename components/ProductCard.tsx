@@ -13,10 +13,23 @@ type ProductProps = {
 export const ProductCard = ({ name, price, image, onAddToCart }: ProductProps) => {
   return (
     <View style={styles.card}>
-      <Image source={image} style={styles.image} resizeMode="cover" />
-      <Text style={styles.name} numberOfLines={1}>{name}</Text>
-      <Text style={styles.price}>${price.toFixed(2)}</Text>
-      <TouchableOpacity style={styles.button} onPress={onAddToCart}>
+      {/* Imagen del producto */}
+      <Image source={image} style={styles.image} resizeMode="contain" />
+
+      {/* Información */}
+      <View style={styles.infoContainer}>
+        <Text style={styles.price}>${price.toFixed(2)}</Text>
+        <Text style={styles.name} numberOfLines={2}>
+          {name}
+        </Text>
+      </View>
+
+      {/* Botón agregar al carrito */}
+      <TouchableOpacity
+        activeOpacity={0.8}
+        style={styles.button}
+        onPress={onAddToCart}
+      >
         <Ionicons name="cart-outline" size={20} color="white" />
       </TouchableOpacity>
     </View>
@@ -25,40 +38,47 @@ export const ProductCard = ({ name, price, image, onAddToCart }: ProductProps) =
 
 const styles = StyleSheet.create({
   card: {
-    width: 140,
+    width: 150,
+    height: 210, // 🔹 altura fija para alinear todos los cards
     backgroundColor: '#fff',
     borderRadius: 16,
     padding: 10,
     marginRight: 16,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.08,
     shadowOffset: { width: 0, height: 1 },
     shadowRadius: 4,
     elevation: 2,
+    justifyContent: 'space-between', // mantiene estructura estable
   },
   image: {
     width: '100%',
-    height: 100, // tamaño uniforme
+    height: 100,
     borderRadius: 12,
-    marginBottom: 8,
+    marginBottom: 6,
   },
-  name: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 4,
+  infoContainer: {
+    flex: 1,
+    justifyContent: 'flex-start',
   },
   price: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#16a34a', // verde
-    marginBottom: 8,
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 2,
+  },
+  name: {
+    fontSize: 13.5,
+    fontWeight: '500',
+    color: '#374151',
+    lineHeight: 18,
   },
   button: {
     backgroundColor: '#16a34a',
-    padding: 6,
-    borderRadius: 8,
+    padding: 8,
+    borderRadius: 10,
     alignItems: 'center',
     alignSelf: 'flex-end',
+    marginTop: 6,
   },
 });

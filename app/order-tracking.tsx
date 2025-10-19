@@ -1,6 +1,7 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React from 'react';
-import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
 export default function OrderTrackingScreen() {
@@ -11,68 +12,103 @@ export default function OrderTrackingScreen() {
     address: string;
   }>();
 
-  const deliveryPerson = {
-    name: 'Carlos Gómez',
-    photo: require('../assets/images/pollo.png'),
-    eta: '25 minutos',
-  };
+  const [statusIndex, setStatusIndex] = useState(0);
+  const statuses = ['Preparando pedido', 'En camino', 'Entregado'];
+  const estimatedRange = '15:40 - 15:50 PM';
 
-  const estimatedDelivery = '15:45 PM';
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStatusIndex((prev) => (prev < statuses.length - 1 ? prev + 1 : prev));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Mapa */}
       <MapView
         style={styles.map}
         initialRegion={{
-          latitude: -16.5,
-          longitude: -68.15,
+          latitude: -17.7833,
+          longitude: -63.1821,
           latitudeDelta: 0.05,
           longitudeDelta: 0.05,
         }}
       >
         <Marker
-          coordinate={{ latitude: -16.5, longitude: -68.15 }}
+          coordinate={{ latitude: -17.7833, longitude: -63.1821 }}
           title="Tu pedido"
-          description="En camino"
+          description="Santa Cruz de la Sierra"
         />
       </MapView>
 
+      {/* Panel inferior con detalles */}
       <View style={styles.infoContainer}>
-        <Text style={styles.title}>Seguimiento de tu pedido</Text>
-
-        <View style={styles.row}>
-          <Image source={deliveryPerson.photo} style={styles.avatar} />
-          <View>
-            <Text style={styles.name}>Entrega a cargo de:</Text>
-            <Text style={styles.deliveryName}>{deliveryPerson.name}</Text>
-            <Text style={styles.eta}>Llega en {deliveryPerson.eta}</Text>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {/* Entrega estimada principal */}
+          <View style={styles.etaContainer}>
+            <Ionicons name="time-outline" size={24} color="#16a34a" style={{ marginRight: 8 }} />
+            <View>
+              <Text style={styles.etaLabel}>Entrega estimada</Text>
+              <Text style={styles.etaValue}>{estimatedRange}</Text>
+            </View>
           </View>
-        </View>
 
-        <View style={styles.details}>
-          <Text style={styles.detailText}> Lo recibirás en:</Text>
-          <Text style={styles.detailValue}>{address}</Text>
+          {/* Timeline visual */}
+          <View style={styles.timeline}>
+            {statuses.map((status, index) => (
+              <View key={index} style={styles.timelineStep}>
+                <View
+                  style={[
+                    styles.circle,
+                    index <= statusIndex ? styles.circleActive : styles.circleInactive,
+                  ]}
+                />
+                <Text
+                  style={[
+                    styles.timelineText,
+                    index <= statusIndex ? styles.activeText : styles.inactiveText,
+                  ]}
+                >
+                  {status}
+                </Text>
+                {index < statuses.length - 1 && (
+                  <View
+                    style={[
+                      styles.line,
+                      index < statusIndex ? styles.lineActive : styles.lineInactive,
+                    ]}
+                  />
+                )}
+              </View>
+            ))}
+          </View>
 
-          <Text style={[styles.detailText, { marginTop: 10 }]}> Entrega estimada:</Text>
-          <Text style={styles.detailValue}>{estimatedDelivery}</Text>
+          {/* Información complementaria */}
+          <View style={styles.details}>
+            <View style={styles.detailRow}>
+              <Ionicons name="location-outline" size={20} color="#16a34a" />
+              <Text style={styles.detailValue}>{address}</Text>
+            </View>
 
-          <Text style={[styles.detailText, { marginTop: 10 }]}> Total:</Text>
-          <Text style={styles.detailValue}>${total}</Text>
+            <View style={styles.detailRow}>
+              <Ionicons name="card-outline" size={20} color="#16a34a" />
+              <Text style={styles.detailValue}>{paymentMethod}</Text>
+            </View>
 
-          <Text style={[styles.detailText, { marginTop: 10 }]}> Método:</Text>
-          <Text style={styles.detailValue}>{paymentMethod}</Text>
-        </View>
+            <View style={[styles.detailRow, { marginTop: 10 }]}>
+              <Ionicons name="cash-outline" size={22} color="#16a34a" />
+              <Text style={styles.totalValue}>${total}</Text>
+            </View>
+          </View>
+        </ScrollView>
 
+        {/* Botón fijo siempre visible */}
         <TouchableOpacity
           style={styles.button}
-          onPress={() =>
-            router.push({
-              pathname: './OrderStatus',
-              params: { total, paymentMethod, address },
-            })
-          }
+          onPress={() => router.replace('/')}
         >
-          <Text style={styles.buttonText}>Ver estado del pedido</Text>
+          <Text style={styles.buttonText}>Volver al inicio</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -84,39 +120,94 @@ const styles = StyleSheet.create({
   map: { flex: 1 },
   infoContainer: {
     backgroundColor: 'white',
-    padding: 18,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
     position: 'absolute',
     bottom: 0,
     width: '100%',
+    maxHeight: '65%',
     shadowColor: '#000',
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.15,
     shadowOffset: { width: 0, height: -3 },
     shadowRadius: 6,
-    elevation: 4,
+    elevation: 5,
   },
-  title: {
-    fontSize: 18,
+  etaContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 14,
+  },
+  etaLabel: { fontSize: 14, color: '#6b7280', textAlign: 'center' },
+  etaValue: {
+    fontSize: 24,
     fontWeight: '700',
-    marginBottom: 10,
-    color: '#111827',
+    color: '#16a34a',
     textAlign: 'center',
   },
-  row: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  avatar: { width: 55, height: 55, borderRadius: 27.5, marginRight: 12 },
-  name: { fontSize: 14, color: '#6b7280' },
-  deliveryName: { fontSize: 16, fontWeight: '600', color: '#111827' },
-  eta: { fontSize: 14, color: '#16a34a' },
-  details: { marginTop: 8 },
-  detailText: { fontSize: 14, color: '#6b7280' },
-  detailValue: { fontSize: 15, fontWeight: '500', color: '#111827' },
+
+  /* Timeline */
+  timeline: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 16,
+  },
+  timelineStep: {
+    alignItems: 'center',
+    flex: 1,
+    position: 'relative',
+  },
+  circle: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    marginBottom: 4,
+  },
+  circleActive: { backgroundColor: '#16a34a' },
+  circleInactive: { backgroundColor: '#d1d5db' },
+  line: {
+    position: 'absolute',
+    top: 7,
+    right: -20,
+    width: 40,
+    height: 2,
+  },
+  lineActive: { backgroundColor: '#16a34a' },
+  lineInactive: { backgroundColor: '#e5e7eb' },
+  timelineText: { fontSize: 13, textAlign: 'center', width: 90 },
+  activeText: { color: '#16a34a', fontWeight: '600' },
+  inactiveText: { color: '#9ca3af' },
+
+  details: { marginTop: 10 },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  detailValue: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#111827',
+    marginLeft: 8,
+    flexShrink: 1,
+  },
+  totalValue: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#16a34a',
+    marginLeft: 8,
+  },
+
   button: {
-    marginTop: 18,
     backgroundColor: '#16a34a',
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
+    marginTop: 16,
+    marginBottom: 8,
   },
   buttonText: { color: 'white', fontSize: 16, fontWeight: '600' },
 });
