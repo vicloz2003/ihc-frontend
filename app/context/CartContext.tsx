@@ -62,9 +62,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
 }
 
+
 export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) throw new Error('useCart debe usarse dentro de un CartProvider');
   return context;
 };
 
+// al final de CartContext.tsx
+export default () => null; // Solo para evitar el warning, pero NO RECOMENDADO

@@ -8,11 +8,15 @@ type ProductProps = {
   price: number;
   image: any; // require()
   onAddToCart: () => void;
+  onPress?: () => void; // ← nueva prop
+
 };
 
-export const ProductCard = ({ name, price, image, onAddToCart }: ProductProps) => {
+export const ProductCard = ({ name, price, image, onAddToCart, onPress}: ProductProps) => {
+    //<View style={styles.card}>
+    //presiona el producto para ver detalles
   return (
-    <View style={styles.card}>
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.9}>
       {/* Imagen del producto */}
       <Image source={image} style={styles.image} resizeMode="contain" />
 
@@ -28,11 +32,14 @@ export const ProductCard = ({ name, price, image, onAddToCart }: ProductProps) =
       <TouchableOpacity
         activeOpacity={0.8}
         style={styles.button}
-        onPress={onAddToCart}
+        onPress={(e: GestureResponderEvent) => {
+          e.stopPropagation(); // evitar que el onPress externo se dispare
+          onAddToCart();
+        }}
       >
         <Ionicons name="cart-outline" size={20} color="white" />
       </TouchableOpacity>
-    </View>
+    </TouchableOpacity> //  cierre correcto del TouchableOpacity externo
   );
 };
 
