@@ -18,7 +18,7 @@ export const ProductCard = ({ name, price, image, onAddToCart }: ProductProps) =
 
       {/* Información */}
       <View style={styles.infoContainer}>
-        <Text style={styles.price}>${price.toFixed(2)}</Text>
+        <Text style={styles.price}>Bs. {price.toFixed(2)}</Text>
         <Text style={styles.name} numberOfLines={2}>
           {name}
         </Text>

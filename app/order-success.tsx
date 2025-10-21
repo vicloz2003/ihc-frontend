@@ -54,7 +54,8 @@ const styles = StyleSheet.create({
     flex: 1, 
     justifyContent: 'center', 
     alignItems: 'center', 
-    backgroundColor: '#f8fafc' 
+    backgroundColor: '#f8fafc',
+    paddingBottom: 140
   },
   content: { 
     alignItems: 'center', 
@@ -62,12 +63,13 @@ const styles = StyleSheet.create({
   },
   animation: { 
     width: 360, 
-    height: 360 
+    height: 360,
+    marginBottom: -20
   },
   title: { 
     fontSize: 24, 
     fontWeight: '800', 
-    marginTop: 8, 
+    marginTop: 0, 
     marginBottom: 8, 
     textAlign: 'center', 
     color: '#16a34a', 
@@ -79,7 +81,7 @@ const styles = StyleSheet.create({
     fontSize: 16, 
     color: '#475569', 
     textAlign: 'center', 
-    marginBottom: 28 
+    marginBottom: 20 
   },
   button: {
     backgroundColor: '#16a34a',

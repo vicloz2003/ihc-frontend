@@ -98,7 +98,7 @@ export default function OrderTrackingScreen() {
 
             <View style={[styles.detailRow, { marginTop: 10 }]}>
               <Ionicons name="cash-outline" size={22} color="#16a34a" />
-              <Text style={styles.totalValue}>${total}</Text>
+              <Text style={styles.totalValue}>Bs. {total}</Text>
             </View>
           </View>
         </ScrollView>
@@ -121,13 +121,14 @@ const styles = StyleSheet.create({
   infoContainer: {
     backgroundColor: 'white',
     paddingHorizontal: 20,
-    paddingTop: 18,
+    paddingTop: 12,
+    paddingBottom: 50,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    maxHeight: '65%',
+    maxHeight: '58%',
     shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowOffset: { width: 0, height: -3 },
@@ -138,11 +139,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 14,
+    marginBottom: 10,
   },
-  etaLabel: { fontSize: 14, color: '#6b7280', textAlign: 'center' },
+  etaLabel: { fontSize: 13, color: '#6b7280', textAlign: 'center' },
   etaValue: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '700',
     color: '#16a34a',
     textAlign: 'center',
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginVertical: 16,
+    marginVertical: 12,
   },
   timelineStep: {
     alignItems: 'center',
@@ -161,41 +162,41 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   circle: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
     marginBottom: 4,
   },
   circleActive: { backgroundColor: '#16a34a' },
   circleInactive: { backgroundColor: '#d1d5db' },
   line: {
     position: 'absolute',
-    top: 7,
+    top: 6,
     right: -20,
     width: 40,
     height: 2,
   },
   lineActive: { backgroundColor: '#16a34a' },
   lineInactive: { backgroundColor: '#e5e7eb' },
-  timelineText: { fontSize: 13, textAlign: 'center', width: 90 },
+  timelineText: { fontSize: 12, textAlign: 'center', width: 90 },
   activeText: { color: '#16a34a', fontWeight: '600' },
   inactiveText: { color: '#9ca3af' },
 
-  details: { marginTop: 10 },
+  details: { marginTop: 8 },
   detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   detailValue: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '500',
     color: '#111827',
     marginLeft: 8,
     flexShrink: 1,
   },
   totalValue: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '700',
     color: '#16a34a',
     marginLeft: 8,
@@ -203,11 +204,11 @@ const styles = StyleSheet.create({
 
   button: {
     backgroundColor: '#16a34a',
-    paddingVertical: 14,
+    paddingVertical: 12,
     borderRadius: 12,
     alignItems: 'center',
-    marginTop: 16,
-    marginBottom: 8,
+    marginTop: 12,
+    marginBottom: 6,
   },
   buttonText: { color: 'white', fontSize: 16, fontWeight: '600' },
 });
