@@ -9,10 +9,11 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useCart } from '../context/CartContext';
 
 export default function CartScreen() {
-  const { cartItems, increaseQuantity, decreaseQuantity, clearCart } = useCart();
+  const { cartItems, increaseQuantity, decreaseQuantity, removeFromCart, clearCart } = useCart();
   const router = useRouter();
 
   const totalProductos = cartItems.reduce(
@@ -31,14 +32,16 @@ export default function CartScreen() {
           </View>
         ) : (
           <FlatList
+            ListHeaderComponent={<Text style={styles.title}>Carrito de compras</Text>}
             data={cartItems}
             keyExtractor={(item) => item.id.toString()}
+            contentContainerStyle={styles.contentContainer}
             renderItem={({ item }) => (
               <View style={styles.item}>
                 <Image source={item.image} style={styles.image} />
                 <View style={styles.info}>
                   <Text style={styles.name}>{item.name}</Text>
-                  <Text style={styles.price}>${item.price.toFixed(2)}</Text>
+                  <Text style={styles.price}>Bs. {item.price.toFixed(2)}</Text>
                   <View style={styles.qtyContainer}>
                     <TouchableOpacity
                       onPress={() => decreaseQuantity(item.id)}
@@ -55,6 +58,12 @@ export default function CartScreen() {
                     </TouchableOpacity>
                   </View>
                 </View>
+                <TouchableOpacity
+                  onPress={() => removeFromCart(item.id)}
+                  style={styles.removeButton}
+                >
+                  <Ionicons name="trash-outline" size={24} color="#dc2626" />
+                </TouchableOpacity>
               </View>
             )}
             ListFooterComponent={() => (
@@ -66,17 +75,17 @@ export default function CartScreen() {
 
                   <View style={styles.summaryRow}>
                     <Text style={styles.summaryLabel}>Productos</Text>
-                    <Text style={styles.summaryValue}>${totalProductos.toFixed(2)}</Text>
+                    <Text style={styles.summaryValue}>Bs. {totalProductos.toFixed(2)}</Text>
                   </View>
 
                   <View style={styles.summaryRow}>
                     <Text style={styles.summaryLabel}>Envío</Text>
-                    <Text style={styles.summaryValue}>${costoEnvio.toFixed(2)}</Text>
+                    <Text style={styles.summaryValue}>Bs. {costoEnvio.toFixed(2)}</Text>
                   </View>
 
                   <View style={styles.summaryRowTotal}>
                     <Text style={styles.summaryTotalLabel}>Subtotal</Text>
-                    <Text style={styles.summaryTotalValue}>${subtotal.toFixed(2)}</Text>
+                    <Text style={styles.summaryTotalValue}>Bs. {subtotal.toFixed(2)}</Text>
                   </View>
 
                   <TouchableOpacity
@@ -107,6 +116,14 @@ export default function CartScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: '#f8fafc' },
   container: { flex: 1, padding: 16 },
+  title: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#1e293b',
+    marginTop: 0,
+    marginBottom: 16,
+  },
+  contentContainer: { paddingTop: 0 },
   item: {
     flexDirection: 'row',
     marginBottom: 16,
@@ -127,6 +144,11 @@ const styles = StyleSheet.create({
   qtyButton: { backgroundColor: '#16a34a', padding: 6, borderRadius: 8 },
   qtyText: { color: 'white', fontWeight: 'bold', fontSize: 16 },
   qtyValue: { marginHorizontal: 12, fontSize: 16 },
+  removeButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+  },
   separator: { height: 1, backgroundColor: '#e2e8f0', marginVertical: 16 },
   summaryContainer: {
     backgroundColor: '#fff',

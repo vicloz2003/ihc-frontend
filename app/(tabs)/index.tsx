@@ -5,8 +5,9 @@ import { SearchBar } from '@/components/SearchBar';
 import { SectionHeader } from '@/components/SectionHeader';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
+  Animated,
   FlatList,
   SafeAreaView,
   ScrollView,
@@ -47,10 +48,54 @@ const MOCK_PRODUCTS = [
 export default function HomeScreen() {
   const router = useRouter();
   const { addToCart, cartItems } = useCart();
+  const [showToast, setShowToast] = useState(false);
+  const [toastOpacity] = useState(new Animated.Value(0));
+  const [productCount, setProductCount] = useState(0);
+
+  useEffect(() => {
+    if (showToast) {
+      // Animar entrada
+      Animated.sequence([
+        Animated.timing(toastOpacity, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.delay(1500),
+        Animated.timing(toastOpacity, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setShowToast(false);
+        setProductCount(0);
+      });
+    }
+  }, [showToast]);
+
+  const closeToast = () => {
+    Animated.timing(toastOpacity, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => {
+      setShowToast(false);
+      setProductCount(0);
+    });
+  };
 
   const handleAddToCart = (product: any) => {
     addToCart(product);
-    // Eliminamos la alerta para una UX más fluida
+    
+    if (showToast) {
+      // Si ya hay un toast visible, incrementar el contador
+      setProductCount(prev => prev + 1);
+    } else {
+      // Si no hay toast, mostrarlo con contador en 1
+      setProductCount(1);
+      setShowToast(true);
+    }
   };
 
   const handleViewAll = (section: string) => {
@@ -59,6 +104,25 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      {/* Toast de notificación */}
+      {showToast && (
+        <Animated.View style={[styles.toast, { opacity: toastOpacity }]}>
+          <View style={styles.toastContent}>
+            <Ionicons name="checkmark-circle" size={24} color="#fff" />
+            <View style={styles.toastTextContainer}>
+              <Text style={styles.toastText}>
+                {productCount > 1 
+                  ? `${productCount} productos agregados al carrito` 
+                  : 'Producto agregado al carrito'}
+              </Text>
+            </View>
+            <TouchableOpacity onPress={closeToast} style={styles.closeButton}>
+              <Ionicons name="close" size={22} color="#fff" />
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+      )}
+
       {/* Header con buscador y carrito */}
       <View style={styles.header}>
         <SearchBar />
@@ -133,11 +197,47 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingTop: 10,
+    paddingTop: 12,
   },
   list: { paddingHorizontal: 16, paddingBottom: 16 },
 
-  // 🔹 Estilos del badge del carrito
+  // Toast de notificación
+  toast: {
+    position: 'absolute',
+    top: 60,
+    left: 12,
+    right: 12,
+    backgroundColor: 'rgba(22, 163, 74, 0.95)',
+    borderRadius: 14,
+    shadowColor: '#000',
+    shadowOpacity: 0.25,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
+    elevation: 6,
+    zIndex: 1000,
+  },
+  toastContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+  },
+  toastTextContainer: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  toastText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 22,
+  },
+  closeButton: {
+    padding: 6,
+    marginLeft: 10,
+  },
+
+  // Estilos del badge del carrito
   cartContainer: {
     position: 'relative',
   },
