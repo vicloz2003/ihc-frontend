@@ -2,6 +2,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  Alert,
+  Image,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -9,30 +11,79 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useCart } from '../context/CartContext';
 
 export default function PaymentScreen() {
   const router = useRouter();
   const { total } = useLocalSearchParams<{ total: string }>();
+  const { cartItems, addOrder, clearCart } = useCart();
 
   const [selectedPayment, setSelectedPayment] = useState('card');
   const [selectedAddress, setSelectedAddress] = useState('home');
 
   const handleConfirmPayment = () => {
-    router.push({
-      pathname: '/order-success',
-      params: { total, paymentMethod: selectedPayment, address: selectedAddress },
-    });
+    const totalAmount = Number(total || 0).toFixed(2);
+    
+    Alert.alert(
+      '¿Confirmar pedido?',
+      `Total a pagar: Bs. ${totalAmount}\n\nIncluye costo de envío.`,
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Confirmar',
+          onPress: () => {
+            // Guardar el pedido en el historial
+            addOrder({
+              items: [...cartItems],
+              total: Number(total),
+              paymentMethod: selectedPayment,
+              address: selectedAddress,
+            });
+            
+            // Limpiar el carrito
+            clearCart();
+            
+            router.push({
+              pathname: '/order-success',
+              params: { total, paymentMethod: selectedPayment, address: selectedAddress },
+            });
+          },
+        },
+      ]
+    );
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
         <Text style={styles.title}>Resumen de Pago</Text>
+
+        {/* LISTA DE PRODUCTOS */}
+        <Text style={styles.subtitle}>Productos seleccionados</Text>
+        <View style={styles.listContainer}>
+          {cartItems.map((item) => (
+            <View key={item.id} style={styles.productRow}>
+              <Image source={item.image} style={styles.productImage} />
+              <View style={styles.productInfo}>
+                <Text style={styles.productName} numberOfLines={2}>
+                  {item.name}
+                </Text>
+                <Text style={styles.productQuantity}>Cantidad: {item.quantity}</Text>
+              </View>
+              <Text style={styles.productPrice}>
+                Bs. {(item.price * (item.quantity || 1)).toFixed(2)}
+              </Text>
+            </View>
+          ))}
+        </View>
 
         {/* TOTAL */}
         <View style={styles.totalContainer}>
           <Text style={styles.label}>Total a pagar</Text>
-          <Text style={styles.total}>${Number(total || 0).toFixed(2)}</Text>
+          <Text style={styles.total}>Bs. {Number(total || 0).toFixed(2)}</Text>
         </View>
 
         {/* MÉTODO DE PAGO */}
@@ -40,6 +91,7 @@ export default function PaymentScreen() {
         <View style={styles.listContainer}>
           {[
             { id: 'card', name: 'Tarjeta de crédito o débito', icon: 'card-outline' },
+            { id: 'qr', name: 'Pago por QR', icon: 'qr-code-outline' },
             { id: 'paypal', name: 'PayPal', icon: 'logo-paypal' },
             { id: 'cash', name: 'Efectivo al entregar', icon: 'cash-outline' },
           ].map((method) => (
@@ -92,7 +144,7 @@ export default function PaymentScreen() {
 
         {/* BOTÓN PAGAR */}
         <TouchableOpacity style={styles.payButton} onPress={handleConfirmPayment}>
-          <Text style={styles.payButtonText}>Confirmar y Pagar</Text>
+          <Text style={styles.payButtonText}>Confirmar pedido</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -102,14 +154,15 @@ export default function PaymentScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: '#f8fafc' },
   container: { flex: 1, padding: 16 },
+  contentContainer: { paddingTop: 0 },
   title: { fontSize: 22, fontWeight: '700', marginBottom: 16 },
   subtitle: { fontSize: 18, fontWeight: '600', marginVertical: 12, color: '#1e293b' },
 
   totalContainer: {
     marginBottom: 16,
   },
-  label: { fontSize: 16, color: '#475569' },
-  total: { fontSize: 22, fontWeight: 'bold', color: '#16a34a', marginTop: 6 },
+  label: { fontSize: 16, color: '#475569', paddingTop: 10, textAlign: 'right' },
+  total: { fontSize: 22, fontWeight: 'bold', color: '#16a34a', marginTop: 6, textAlign: 'right' },
 
   listContainer: {
     backgroundColor: '#fff',
@@ -122,6 +175,40 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 1,
   },
+  
+  // Estilos para productos
+  productRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomColor: '#e2e8f0',
+    borderBottomWidth: 1,
+  },
+  productImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 8,
+    marginRight: 12,
+  },
+  productInfo: {
+    flex: 1,
+  },
+  productName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1e293b',
+    marginBottom: 4,
+  },
+  productQuantity: {
+    fontSize: 12,
+    color: '#64748b',
+  },
+  productPrice: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#16a34a',
+  },
+
   row: {
     flexDirection: 'row',
     alignItems: 'center',

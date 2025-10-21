@@ -6,7 +6,19 @@ export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: '#16a34a',
+          height: 75,
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+          fontSize: 18, 
+          height: 40,
+        },
+        // headerTitleAlign: 'center',
+        headerTitle: '🛒 Groceries Smart 🛒',
         tabBarActiveTintColor: '#16a34a',
       }}
     >
@@ -26,6 +38,21 @@ export default function TabsLayout() {
           tabBarIcon: ({ color }) => (
             <Ionicons name="cart" size={24} color={color} />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Perfil',
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="person" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="payment"
+        options={{
+          href: null,
         }}
       />
     </Tabs>
