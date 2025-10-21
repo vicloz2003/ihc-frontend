@@ -2,26 +2,11 @@ import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const categories = [
-  'Aderezos',
-  'Básicos',
-  'Café y Sucedáneos',
-  'Chocolates y Caramelos',
-  'Comidas en Conserva',
-  'Condimentos y Legumbres',
-  'Dietéticos y Saludables',
-  'Frutas en Conserva',
-  'Galletas',
-  'Golosinas - Varias',
-  'Mascotas',
-  'Mermeladas y Mieles',
-  'Nutrición Infantil',
-  'Productos Americanos',
-  'Productos Importados',
-  'Repostería',
-  'Salsas y Extracto de Tomate',
-  'Snacks',
-  'Temporada',
-  'Verduras en Conserva',
+  'Bebidas',
+  'Limpieza',
+  'Basicos',
+  'Reposteria',
+  'Snacks'
 ];
 
 export default function CategoryCarousel() {
